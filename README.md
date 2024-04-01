@@ -241,7 +241,7 @@ public class Test {
 }
 ```
 
-### Результати
+### Результати:
 
 ![](/screens/App.png)
 
