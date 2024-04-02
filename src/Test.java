@@ -1,5 +1,7 @@
 package src;
 
+import java.io.*;
+
 public class Test {
     /**
      * Клас для тестування правильності обчислення та серіалізації/десеріалізації
@@ -7,7 +9,7 @@ public class Test {
      * значенні десяткового числа.
      */
     public static void main(String[] args) {
-        Calculation data = new Calculation(987654321, 3, 7);
+        Result data = new Result(987654321, 3, 7);
 
         System.out.println("Початкові дані:");
         System.out.println(data);
@@ -17,7 +19,7 @@ public class Test {
         testSerialization(data);
     }
 
-    public static void testCalculations(Calculation data) {
+    public static void testCalculations(Result data) {
         int decimalNumber = data.getDecimalNumber();
         int hexCount = data.getHexCount();
         int octCount = data.getOctCount();
@@ -29,10 +31,10 @@ public class Test {
         System.out.println("Тест коректності обчислень пройдено успішно.");
     }
 
-    public static void testSerialization(Calculation data) {
+    public static void testSerialization(Result data) {
         Demo.saveObjectState(data, "test.ser");
 
-        Calculation restoredData = Demo.restoreObjectState("test.ser");
+        Result restoredData = Test.restoreObjectState("test.ser");
 
         assert restoredData != null;
         assert restoredData.getDecimalNumber() == data.getDecimalNumber();
@@ -40,5 +42,17 @@ public class Test {
         assert restoredData.getOctCount() == data.getOctCount();
 
         System.out.println("Тест серіалізації та десеріалізації пройдено успішно.");
+    }
+
+    public static Result restoreObjectState(String filename) {
+        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filename))) {
+            Object obj = inputStream.readObject();
+            if (obj instanceof Result) {
+                return (Result) obj;
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

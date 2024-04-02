@@ -1,6 +1,7 @@
 package src;
 
 import java.io.*;
+import java.util.List;
 
 public class Demo {
     /**
@@ -9,15 +10,29 @@ public class Demo {
      * десяткового числа.
      */
     public static void main(String[] args) {
-        Calculation data = new Calculation(123456789, 5, 3);
+        Solver solver = new Solver();
 
-        saveObjectState(data, "data.ser");
+        Result data1 = new Result(123456789, 5, 3);
+        Result data2 = new Result(987654321, 3, 7);
 
-        Calculation restoredData = restoreObjectState("data.ser");
+        solver.solveProblem(data1);
+        solver.solveProblem(data2);
 
-        if (restoredData != null) {
+        List<Result> results = solver.getResults();
+        for (Result result : results) {
+            System.out.println("Результат: " + result);
+        }
+
+        saveObjectState(solver, "solver.ser");
+
+        Solver restoredSolver = restoreObjectState("solver.ser");
+
+        if (restoredSolver != null) {
             System.out.println("Відновлені дані:");
-            System.out.println(restoredData);
+            List<Result> restoredResults = restoredSolver.getResults();
+            for (Result result : restoredResults) {
+                System.out.println("Результат: " + result);
+            }
         }
     }
 
@@ -30,11 +45,11 @@ public class Demo {
         }
     }
 
-    public static Calculation restoreObjectState(String filename) {
+    public static Solver restoreObjectState(String filename) {
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filename))) {
             Object obj = inputStream.readObject();
-            if (obj instanceof Calculation) {
-                return (Calculation) obj;
+            if (obj instanceof Result) {
+                return (Solver) obj;
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

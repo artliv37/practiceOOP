@@ -1,6 +1,8 @@
 package src;
 
-import java.io.Serializable;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Solver implements Serializable {
     /**
@@ -9,13 +11,21 @@ public class Solver implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    private Calculation calculationData;
+    private List<Result> results;
 
-    public Solver(Calculation calculationData) {
-        this.calculationData = calculationData;
+    public Solver() {
+        this.results = new ArrayList<>();
     }
 
-    public void solveProblem() {
+    public void addResult(Result result) {
+        this.results.add(result);
+    }
+
+    public List<Result> getResults() {
+        return results;
+    }
+
+    public void solveProblem(Result calculationData) {
         int decimalNumber = calculationData.getDecimalNumber();
         int hexCount = calculationData.getHexCount();
         int octCount = calculationData.getOctCount();
@@ -23,13 +33,7 @@ public class Solver implements Serializable {
         System.out.println("Десяткове число: " + decimalNumber);
         System.out.println("Кількість 16-річних цифр: " + hexCount);
         System.out.println("Кількість 8-річних цифр: " + octCount);
-    }
 
-    public Calculation getCalculationData() {
-        return calculationData;
-    }
-
-    public void setCalculationData(Calculation calculationData) {
-        this.calculationData = calculationData;
+        addResult(calculationData); // Додаємо результат до колекції
     }
 }
