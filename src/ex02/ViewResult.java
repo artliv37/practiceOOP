@@ -3,6 +3,7 @@ package src.ex02;
 import java.io.*;
 import java.util.ArrayList;
 import src.ex01.Item2d;
+import src.ex01.Calc;
 
 /**
  * ConcreteProduct
@@ -16,6 +17,7 @@ import src.ex01.Item2d;
  */
 
 public class ViewResult implements View {
+    private Calc calc = new Calc();
 
     private static final String FNAME = "items.bin";
     private static final int DEFAULT_NUM = 10;
@@ -35,9 +37,10 @@ public class ViewResult implements View {
         return items;
     }
 
+    int hexCount = 0;
+
     public int viewCountHexDigits(String number) {
         String numberString = String.valueOf(number);
-        int hexCount = 0;
         for (int i = 0; i < numberString.length(); i++) {
             char digit = numberString.charAt(i);
             if (digit >= 'A' && digit <= 'F')
@@ -45,6 +48,7 @@ public class ViewResult implements View {
             if (digit >= '0' && digit <= '9')
                 hexCount++;
         }
+        calc.getResult().setHexCount(hexCount);
         return hexCount;
     }
 
@@ -56,6 +60,7 @@ public class ViewResult implements View {
             if (digit >= '0' && digit <= '7')
                 octCount++;
         }
+        calc.getResult().setOctCount(octCount);
         return octCount;
     }
 
@@ -94,7 +99,6 @@ public class ViewResult implements View {
 
     @Override
     public void viewShow() {
-        viewBody();
         viewFooter();
     }
 }

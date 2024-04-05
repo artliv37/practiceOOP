@@ -2,6 +2,8 @@ package src.ex02;
 
 import java.io.*;
 
+import src.ex03.ViewTable;
+
 /**
  * Вычисление и отображение результатов.<br>
  * Содержит реализацию статического метода main()
@@ -34,15 +36,16 @@ public class Main {
                     System.out.println("Exit.");
                     break;
                 case 'c':
-                    view.viewBody();
+                    System.out.println();
                     System.out.println("Enter a decimal number: ");
                     try {
                         String number = in.readLine();
+                        view.viewHeader();
                         int hexCount = view.viewCountHexDigits(number);
                         int octCount = view.viewCountOctDigits(number);
-                        view.viewHeader();
-                        System.out.println("Hex Count: " + hexCount);
-                        System.out.println("Oct Count: " + octCount);
+                        ViewTable otherObject = new ViewTable();
+                        otherObject.setCounts(hexCount, octCount);
+                        otherObject.viewBody();
                         view.viewShow();
                     } catch (IOException | NumberFormatException e) {
                         System.out.println("Error: " + e.getMessage());
