@@ -520,6 +520,48 @@ public class ViewResult implements View {
 }
 ```
 
+```java
+package test.ex02;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+import java.io.IOException;
+import src.ex02.*;
+
+/**
+ * Выполняет тестирование
+ */
+
+public class MainTest {
+    @Test
+    public void testViewCountHexDigits() {
+        ViewResult view = new ViewResult();
+        int hexCount = view.viewCountHexDigits("ABC123");
+        assertEquals(6, hexCount);
+    }
+
+    @Test
+    public void testViewCountOctDigits() {
+        ViewResult view = new ViewResult();
+        int octCount = view.viewCountOctDigits("1234567");
+        assertEquals(7, octCount);
+    }
+
+    @Test
+    public void testRestore() throws Exception {
+        ViewResult view1 = new ViewResult(5);
+        ViewResult view2 = new ViewResult();
+        try {
+            view1.viewSave();
+            view2.viewRestore();
+            assertEquals(view1.getItems().size(), view2.getItems().size());
+        } catch (IOException | ClassNotFoundException e) {
+            e.getMessage();
+        }
+    }
+}
+```
+
 ### Результати:
 
 ![](/screens/task3.png)
@@ -671,6 +713,56 @@ public class ViewTable extends ViewResult {
 }
 ```
 
+```java
+package test.ex03;
+
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import java.io.IOException;
+import src.ex03.*;
+
+/**
+ * Выполняет тестирование
+ * разработанных классов.
+ */
+
+public class MainTest {
+
+    @Test
+    public void testCalc() {
+        ViewTable tbl = new ViewTable(10, 5);
+        assertEquals(10, tbl.getWidth());
+        assertEquals(5, tbl.getItems().size());
+        tbl.setCounts(16, 8);
+        tbl.viewHeader();
+        tbl.viewBody();
+        tbl.viewFooter();
+    }
+
+    @Test
+    public void testRestore() {
+        ViewTable tbl1 = new ViewTable(10, 1000);
+        ViewTable tbl2 = new ViewTable();
+
+        tbl1.setCounts(16, 8);
+
+        try {
+            tbl1.viewSave();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            tbl2.viewRestore();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertEquals(tbl1.getItems().size(), tbl2.getItems().size());
+    }
+}
+```
+
 ### Результати:
 
 ![](/screens/task4.png)
@@ -682,6 +774,42 @@ public class ViewTable extends ViewResult {
 # Завдання 5
 
 ### Код
+
+```java
+
+```
+
+```java
+
+```
+
+```java
+
+```
+
+```java
+
+```
+
+```java
+
+```
+
+```java
+
+```
+
+```java
+
+```
+
+```java
+
+```
+
+```java
+
+```
 
 ```java
 
