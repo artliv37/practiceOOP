@@ -46,7 +46,7 @@ public class Main {
                         ViewTable otherObject = new ViewTable();
                         otherObject.setCounts(hexCount, octCount);
                         otherObject.viewBody();
-                        view.viewShow();
+                        view.viewFooter();
                     } catch (IOException | NumberFormatException e) {
                         System.out.println("Error: " + e.getMessage());
                     }

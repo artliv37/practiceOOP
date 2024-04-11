@@ -1,5 +1,11 @@
 package src.ex04;
 
-public class ConsoleCommand {
+/**
+ * Интерфейс
+ * консольной команды;
+ * шаблон Command
+ */
 
+public interface ConsoleCommand extends Command {
+    public char getKey();
 }

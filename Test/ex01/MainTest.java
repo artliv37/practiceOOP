@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Выполняет тестирование разработанных классов.
+ * 
  */
 
 public class MainTest {

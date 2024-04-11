@@ -306,7 +306,7 @@ public class Main {
                         view.viewHeader();
                         view.viewCountHexDigits(number);
                         view.viewCountOctDigits(number);
-                        view.viewShow();
+                        view.viewFooter();
                     } catch (IOException | NumberFormatException e) {
                         System.out.println("Error: " + e.getMessage());
                     }
@@ -514,6 +514,7 @@ public class ViewResult implements View {
 
     @Override
     public void viewShow() {
+        viewHeader();
         viewBody();
         viewFooter();
     }
@@ -777,57 +778,361 @@ public class MainTest {
 ### Код
 
 ```java
+package src.ex04;
 
+import src.ex02.View;
+import src.ex03.ViewableTable;
+
+/**
+ * Формирует и отображает
+ * меню; реализует шаблон
+ * Singleton
+ */
+
+public class Application {
+    private static Application instance = new Application();
+
+    private Application() {
+    }
+
+    public static Application getInstance() {
+        return instance;
+    }
+
+    private View view = new ViewableTable().getView();
+    private Menu menu = new Menu();
+
+    public void run() {
+        menu.add(new ViewConsoleCommand(view));
+        menu.add(new GenerateConsoleCommand(view));
+        menu.add(new SaveConsoleCommand(view));
+        menu.add(new RestoreConsoleCommand(view));
+        menu.execute();
+    }
+}
 ```
 
 ```java
+package src.ex04;
 
+/**
+ * Интерфейс команды
+ * или задачи;
+ * шаблоны: Command,
+ * Worker Thread
+ */
+
+public interface Command {
+    public void execute();
+}
 ```
 
 ```java
+package src.ex04;
 
+/**
+ * Интерфейс
+ * консольной команды;
+ * шаблон Command
+ */
+
+public interface ConsoleCommand extends Command {
+    public char getKey();
+}
 ```
 
 ```java
+package src.ex04;
 
+import src.ex02.View;
+import src.ex03.ViewTable;
+import java.io.*;
+
+/**
+ * Консольная команда
+ * Generate;
+ * шаблон Command
+ */
+public class GenerateConsoleCommand implements ConsoleCommand {
+    private View view;
+
+    public GenerateConsoleCommand(View view) {
+        this.view = view;
+    }
+
+    @Override
+    public char getKey() {
+        return 'c';
+    }
+
+    @Override
+    public String toString() {
+        return "'c'ount digits";
+    }
+
+    @Override
+    public void execute() {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println();
+        System.out.println("Enter a decimal number: ");
+        try {
+            String number = in.readLine();
+            view.viewHeader();
+            int hexCount = view.viewCountHexDigits(number);
+            int octCount = view.viewCountOctDigits(number);
+            ViewTable otherObject = new ViewTable();
+            otherObject.setCounts(hexCount, octCount);
+            otherObject.viewBody();
+            view.viewFooter();
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
 ```
 
 ```java
+package src.ex04;
 
+/**
+ * Вычисление и отображение
+ * результатов; cодержит реализацию
+ * статического метода main()
+ * 
+ * @see Main#main
+ */
+
+public class Main {
+    public static void main(String[] args) {
+        Application app = Application.getInstance();
+        app.run();
+    }
+}
 ```
 
 ```java
+package src.ex04;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Макрокоманда
+ * (шаблон Command);
+ * Коллекция объектов
+ * класса ConsoleCommand
+ */
+
+public class Menu implements Command {
+    private List<ConsoleCommand> menu = new ArrayList<ConsoleCommand>();
+
+    public ConsoleCommand add(ConsoleCommand command) {
+        menu.add(command);
+        return command;
+    }
+
+    @Override
+    public String toString() {
+        String s = "Enter command...\n";
+        for (ConsoleCommand c : menu) {
+            s += c + ", ";
+        }
+        s += "'q'uit: ";
+        return s;
+    }
+
+    @Override
+    public void execute() {
+        String s = null;
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        menu: while (true) {
+            do {
+                System.out.print(this);
+                try {
+                    s = in.readLine();
+                } catch (IOException e) {
+                    System.err.println("Error: " + e);
+                    System.exit(0);
+                }
+            } while (s.length() != 1);
+            char key = s.charAt(0);
+            if (key == 'q') {
+                System.out.println("Exit.");
+                break menu;
+            }
+            for (ConsoleCommand c : menu) {
+                if (s.charAt(0) == c.getKey()) {
+                    c.execute();
+                    continue menu;
+                }
+            }
+            System.out.println("Wrong command.");
+            continue menu;
+        }
+    }
+}
 ```
 
 ```java
+package src.ex04;
 
+import src.ex02.View;
+
+/**
+ * Консольная команда
+ * Restore;
+ * шаблон Command
+ */
+
+public class RestoreConsoleCommand implements ConsoleCommand {
+    private View view;
+
+    public RestoreConsoleCommand(View view) {
+        this.view = view;
+    }
+
+    @Override
+    public char getKey() {
+        return 'r';
+    }
+
+    @Override
+    public String toString() {
+        return "'r'estore";
+    }
+
+    @Override
+    public void execute() {
+        System.out.println();
+        System.out.println("Restore last saved.");
+        try {
+            view.viewRestore();
+        } catch (Exception e) {
+            System.err.println("Serialization error: " + e);
+        }
+        System.out.println();
+    }
+}
 ```
 
 ```java
+package src.ex04;
 
+import java.io.IOException;
+import src.ex02.View;
+
+/**
+ * Консольная команда
+ * Save;
+ * шаблон Command
+ */
+
+public class SaveConsoleCommand implements ConsoleCommand {
+    private View view;
+
+    public SaveConsoleCommand(View view) {
+        this.view = view;
+    }
+
+    @Override
+    public char getKey() {
+        return 's';
+    }
+
+    @Override
+    public String toString() {
+        return "'s'ave";
+    }
+
+    @Override
+    public void execute() {
+        System.out.println();
+        System.out.println("Save current.");
+        try {
+            view.viewSave();
+        } catch (IOException e) {
+            System.err.println("Serialization error: " + e);
+        }
+        System.out.println();
+    }
+}
 ```
 
 ```java
+package src.ex04;
 
+import src.ex02.View;
+
+/**
+ * Консольная команда
+ * View;
+ * шаблон Command
+ */
+
+public class ViewConsoleCommand implements ConsoleCommand {
+    private View view;
+
+    public ViewConsoleCommand(View view) {
+        this.view = view;
+    }
+
+    @Override
+    public char getKey() {
+        return 'v';
+    }
+
+    @Override
+    public String toString() {
+        return "'v'iew";
+    }
+
+    @Override
+    public void execute() {
+        System.out.println("View current.");
+        view.viewHeader();
+        view.viewBody();
+        view.viewFooter();
+    }
+}
 ```
 
 ```java
+package test.ex04;
 
-```
+import static org.junit.Assert.*;
+import org.junit.Test;
+import src.ex02.ViewResult;
+import src.ex03.ViewTable;
+import src.ex04.GenerateConsoleCommand;
 
-```java
+public class ChangeConsoleCommandTest {
 
-```
+    @Test
+    public void testExecute() {
+        ViewTable tbl = new ViewTable(10, 5);
+        assertEquals(10, tbl.getWidth());
+        assertEquals(5, tbl.getItems().size());
+        tbl.setCounts(16, 8);
+        tbl.viewHeader();
+        tbl.viewBody();
+        tbl.viewFooter();
+    }
 
-```java
-
+    @Test
+    public void testGetKey() {
+        GenerateConsoleCommand cmd = new GenerateConsoleCommand(new ViewResult());
+        assertEquals('c', cmd.getKey());
+    }
+}
 ```
 
 ### Результати:
 
-![]()
+![](/screens/task5.png)
 
 ### Результати тестування:
 
-![]()
+![](/screens/task5Test.png)

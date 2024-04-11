@@ -1,5 +1,12 @@
 package src.ex04;
 
-public class Command {
+/**
+ * Интерфейс команды
+ * или задачи;
+ * шаблоны: Command,
+ * Worker Thread
+ */
 
+public interface Command {
+    public void execute();
 }

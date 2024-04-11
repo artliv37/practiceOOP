@@ -99,6 +99,8 @@ public class ViewResult implements View {
 
     @Override
     public void viewShow() {
+        viewHeader();
+        viewBody();
         viewFooter();
     }
 }
