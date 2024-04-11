@@ -1,3 +1,5 @@
+## Варіант 10
+
 # Завдання 1
 
 ### Код:
@@ -208,7 +210,7 @@ public class Main {
 ```
 
 ```java
-package test.ex01;
+package Test.ex01;
 
 import org.junit.Test;
 import src.ex01.*;
@@ -522,7 +524,7 @@ public class ViewResult implements View {
 ```
 
 ```java
-package test.ex02;
+package Test.ex02;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -716,7 +718,7 @@ public class ViewTable extends ViewResult {
 ```
 
 ```java
-package test.ex03;
+package Test.ex03;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -1100,7 +1102,7 @@ public class ViewConsoleCommand implements ConsoleCommand {
 ```
 
 ```java
-package test.ex04;
+package Test.ex04;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -1136,3 +1138,19 @@ public class ChangeConsoleCommandTest {
 ### Результати тестування:
 
 ![](/screens/task5Test.png)
+
+# Завдання 6
+
+### Код
+
+```java
+
+```
+
+### Результати:
+
+![]()
+
+### Результати тестування:
+
+![]()

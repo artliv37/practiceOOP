@@ -1,4 +1,4 @@
-package test.ex01;
+package Test.ex01;
 
 import org.junit.Test;
 import src.ex01.*;
