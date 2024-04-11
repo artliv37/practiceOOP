@@ -1,4 +1,4 @@
-package Test.ex02;
+package test.ex02;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

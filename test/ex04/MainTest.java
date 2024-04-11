@@ -1,4 +1,4 @@
-package Test.ex04;
+package test.ex04;
 
 import static org.junit.Assert.*;
 import org.junit.Test;

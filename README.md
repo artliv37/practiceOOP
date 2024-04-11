@@ -210,7 +210,7 @@ public class Main {
 ```
 
 ```java
-package Test.ex01;
+package test.ex01;
 
 import org.junit.Test;
 import src.ex01.*;
@@ -524,7 +524,7 @@ public class ViewResult implements View {
 ```
 
 ```java
-package Test.ex02;
+package test.ex02;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -718,7 +718,7 @@ public class ViewTable extends ViewResult {
 ```
 
 ```java
-package Test.ex03;
+package test.ex03;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -1102,7 +1102,7 @@ public class ViewConsoleCommand implements ConsoleCommand {
 ```
 
 ```java
-package Test.ex04;
+package test.ex04;
 
 import static org.junit.Assert.*;
 import org.junit.Test;

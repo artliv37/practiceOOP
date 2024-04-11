@@ -1,4 +1,4 @@
-package Test.ex03;
+package test.ex03;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
