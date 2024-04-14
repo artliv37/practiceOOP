@@ -1110,7 +1110,7 @@ import src.ex02.ViewResult;
 import src.ex03.ViewTable;
 import src.ex04.GenerateConsoleCommand;
 
-public class ChangeConsoleCommandTest {
+public class MainTest {
 
     @Test
     public void testExecute() {
@@ -1144,13 +1144,295 @@ public class ChangeConsoleCommandTest {
 ### Код
 
 ```java
+package src.ex05;
 
+import java.util.concurrent.TimeUnit;
+import src.ex02.ViewResult;
+import src.ex03.ViewTable;
+import src.ex04.Command;
+
+/**
+ * Задача, используемая
+ * обработчиком потока;
+ * шаблон Worker Thread
+ */
+
+public class AvgCommand implements Command {
+    private double result = 0.0;
+    private int progress = 0;
+    private ViewResult viewResult;
+
+    ViewTable view = new ViewTable();
+
+    public ViewResult getViewResult() {
+        return viewResult;
+    }
+
+    public ViewResult setViewResult(ViewResult viewResult) {
+        return this.viewResult = viewResult;
+    }
+
+    public AvgCommand(ViewResult viewResult) {
+        this.viewResult = viewResult;
+    }
+
+    public double getResult() {
+        return result;
+    }
+
+    public boolean running() {
+        return progress < 100;
+    }
+
+    @Override
+    public void execute() {
+        progress = 0;
+        System.out.println("Average executed...");
+        int idx = 1, size = viewResult.getItems().size();
+        progress = idx * 100 / size;
+        if (idx++ % (size / 2) == 0) {
+            System.out.println("Average " + progress + "%");
+        }
+        try {
+            TimeUnit.MILLISECONDS.sleep(2000 / size);
+        } catch (InterruptedException e) {
+            System.err.println(e);
+        }
+        view.vres();
+        progress = 100;
+    }
+}
+```
+
+```java
+package src.ex05;
+
+import java.util.Vector;
+import src.ex04.Command;
+
+/**
+ * Создает обработчик
+ * потока, выполняющего
+ * объекты с интерфейсом
+ * Command; шаблон
+ * Worker Thread
+ */
+
+public class CommandQueue implements Queue {
+    private Vector<Command> tasks;
+    private boolean waiting;
+    private boolean shutdown;
+
+    public void shutdown() {
+        shutdown = true;
+    }
+
+    public CommandQueue() {
+        tasks = new Vector<Command>();
+        waiting = false;
+        new Thread(new Worker()).start();
+    }
+
+    @Override
+    public void put(Command r) {
+        tasks.add(r);
+        if (waiting) {
+            synchronized (this) {
+                notifyAll();
+            }
+        }
+    }
+
+    @Override
+    public Command take() {
+        if (tasks.isEmpty()) {
+            synchronized (this) {
+                waiting = true;
+                try {
+                    wait();
+                } catch (InterruptedException ie) {
+                    waiting = false;
+                }
+            }
+        }
+        return (Command) tasks.remove(0);
+    }
+
+    private class Worker implements Runnable {
+        public void run() {
+            while (!shutdown) {
+                Command r = take();
+                r.execute();
+            }
+        }
+    }
+}
+```
+
+```java
+package src.ex05;
+
+import java.util.concurrent.TimeUnit;
+import src.ex02.View;
+import src.ex02.ViewResult;
+import src.ex04.ConsoleCommand;
+
+/**
+ * Консольная команда
+ * Execute all threads;
+ * шаблон Command
+ */
+
+public class ExecuteConsoleCommand implements ConsoleCommand {
+    private View view;
+
+    public View getView() {
+        return view;
+    }
+
+    public View setView(View view) {
+        return this.view = view;
+    }
+
+    public ExecuteConsoleCommand(View view) {
+        this.view = view;
+    }
+
+    @Override
+    public char getKey() {
+        return 'e';
+    }
+
+    @Override
+    public String toString() {
+        return "'e'xecute";
+    }
+
+    @Override
+    public void execute() {
+        CommandQueue queue1 = new CommandQueue();
+
+        AvgCommand avgCommand = new AvgCommand((ViewResult) view);
+        System.out.println("Execute all threads...");
+
+        queue1.put(avgCommand);
+
+        try {
+            while (avgCommand.running()) {
+                TimeUnit.MILLISECONDS.sleep(100);
+            }
+
+            queue1.shutdown();
+
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            System.err.println(e);
+        }
+        System.out.println("All done.");
+    }
+}
+```
+
+```java
+package src.ex05;
+
+import src.ex04.Command;
+
+/**
+ * Представляет
+ * методы для помещения
+ * и извлечения задач
+ * обработчиком потока;
+ * шаблон Worker Thread
+ */
+
+public interface Queue {
+    void put(Command cmd);
+
+    Command take();
+}
+```
+
+```java
+package src.ex05;
+
+import src.ex02.View;
+import src.ex02.ViewableResult;
+import src.ex04.GenerateConsoleCommand;
+import src.ex04.Menu;
+import src.ex04.ViewConsoleCommand;
+
+/**
+ * Вычисление и отображение
+ * результатов; содержит реализацию
+ * статического метода main()
+ */
+
+public class Main {
+    private View view = new ViewableResult().getView();
+    private Menu menu = new Menu();
+
+    public void run() {
+        menu.add(new ViewConsoleCommand(view));
+        menu.add(new GenerateConsoleCommand(view));
+        menu.add(new ExecuteConsoleCommand(view));
+        menu.execute();
+    }
+
+    public static void main(String[] args) {
+        Main main = new Main();
+        main.run();
+    }
+}
+```
+
+```java
+package test.ex05;
+
+import static org.junit.Assert.*;
+import java.util.concurrent.TimeUnit;
+import org.junit.Test;
+import src.ex02.ViewResult;
+import src.ex05.AvgCommand;
+import src.ex05.CommandQueue;
+
+/**
+ * Тестирование
+ * разработанных классов
+ */
+
+public class MainTest {
+    private final static int N = 1000;
+    private static ViewResult view = new ViewResult(N);
+    private static AvgCommand avg1 = new AvgCommand(view);
+    private static AvgCommand avg2 = new AvgCommand(view);
+    private CommandQueue queue = new CommandQueue();
+
+    @Test
+    public void testAvg() {
+        avg1.execute();
+    }
+
+    @Test
+    public void testAvgQueue() {
+        queue.put(avg2);
+        try {
+            while (avg2.running()) {
+                TimeUnit.MILLISECONDS.sleep(100);
+            }
+            queue.shutdown();
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
+    }
+}
 ```
 
 ### Результати:
 
-![]()
+![](/screens/task6.png)
 
 ### Результати тестування:
 
-![]()
+![](/screens/task6Test.png)

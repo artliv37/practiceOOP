@@ -52,9 +52,10 @@ public class ViewResult implements View {
         return hexCount;
     }
 
+    int octCount = 0;
+
     public int viewCountOctDigits(String number) {
         String numberString = String.valueOf(number);
-        int octCount = 0;
         for (int i = 0; i < numberString.length(); i++) {
             char digit = numberString.charAt(i);
             if (digit >= '0' && digit <= '7')
@@ -88,11 +89,13 @@ public class ViewResult implements View {
 
     @Override
     public void viewBody() {
-        System.out.println();
+        System.out.println("hex: " + hexCount);
+        System.out.println("oct: " + octCount);
     }
 
     @Override
     public void viewFooter() {
+        System.out.println();
         System.out.println("End.");
         System.out.println();
     }

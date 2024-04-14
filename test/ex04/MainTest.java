@@ -6,7 +6,7 @@ import src.ex02.ViewResult;
 import src.ex03.ViewTable;
 import src.ex04.GenerateConsoleCommand;
 
-public class ChangeConsoleCommandTest {
+public class MainTest {
 
     @Test
     public void testExecute() {

@@ -67,10 +67,20 @@ public class ViewTable extends ViewResult {
 
     private int hexCount;
     private int octCount;
+    private double result = 0.0;
 
     public void setCounts(int hexCount, int octCount) {
         this.hexCount = hexCount;
         this.octCount = octCount;
+    }
+
+    private void res(int hexCount, int octCount) {
+        result = (hexCount + octCount) / 2;
+        System.out.println("Average done. Result = " + String.format("%.1f", result));
+    }
+
+    public void vres() {
+        res(hexCount, octCount);
     }
 
     public void viewBody() {
